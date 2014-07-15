@@ -17,7 +17,7 @@
     <instrumentation android:targetPackage="com.gettaxi.android"
        android:name="il.co.topq.mobile.server.impl.RobotiumExecutorApp2"/> 
     
-    <instrumentation android:targetPackage="com.getatxi"
+    <instrumentation android:targetPackage="com.example.testapp"
        android:name="il.co.topq.mobile.server.impl.RobotiumExecutorApp3"/> 
        
        <instrumentation android:targetPackage="com.lexa.fakegps"
