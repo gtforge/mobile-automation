@@ -164,6 +164,16 @@ public class MobileClient implements MobileClientInterface {
 	public CommandResponse getText(int index) throws Exception {
 		return sendData("getText", Integer.toString(index));
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see il.co.topq.mobile.client.impl.Delme#getText(int)
+	 */
+	@Override
+	public CommandResponse getTextById(int id) throws Exception {
+		return sendData("getTextById", Integer.toString(id));
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -763,6 +773,13 @@ public class MobileClient implements MobileClientInterface {
 	@Override
 	public CommandResponse isRadioButtoncheckedByIndex(int RBtnIndex) throws Exception {
 		return sendData("isRadioButtoncheckedByIndex", String.valueOf(RBtnIndex));
+	}
+
+
+	@Override
+	public CommandResponse validateIfTextIsFound(String textToSearch)
+			throws Exception {
+		return sendData("validateIfTextIsFound", textToSearch);
 	}
 		
 }

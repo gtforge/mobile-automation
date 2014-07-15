@@ -7,7 +7,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.jsystemtest.mobile.core.AdbController;
 import org.jsystemtest.mobile.core.ConnectionException;
 
@@ -17,8 +16,6 @@ import com.android.ddmlib.IShellOutputReceiver;
 import com.android.ddmlib.InstallException;
 import com.android.ddmlib.RawImage;
 import com.android.ddmlib.SyncService;
-import com.aqua.sysobj.conn.CliCommand;
-import com.aqua.sysobj.conn.WindowsDefaultCliConnection;
 
 public abstract class AbstractAndroidDevice {
 	private final static Logger logger = Logger.getLogger(AbstractAndroidDevice.class);

@@ -268,6 +268,8 @@ public class SoloExecutor {
 			response = getViews(request.getParams());
 		} else if (commandStr.equals("getText")) {
 			response = getText(request.getParams());
+		} else if (commandStr.equals("getTextById")) {
+			response = getTextById(request.getParams());
 		} else if (commandStr.equals("getTextViewIndex")) {
 			response = getTextViewIndex(request.getParams());
 		} else if (commandStr.equals("getTextView")) {
@@ -346,6 +348,8 @@ public class SoloExecutor {
 			response = getTable(request.getParams());
 		} else if (commandStr.equals("getIndexListItemByText")) {
 			response = getIndexListItemByText(request.getParams());
+		} else if (commandStr.equals("validateIfTextIsFound")) {
+			response = validateIfTextIsFound(request.getParams());
 		}
 		
 		else{
@@ -859,6 +863,45 @@ public class SoloExecutor {
 		}
 		return result;
 	}
+	
+	/**
+	 * gets the text by id
+	 * 
+	 * @param arguments
+	 *            index
+	 * @return response with the status of the command
+	 */
+	private CommandResponse getTextById(String[] arguments) {
+		String command = "the command  getTextById";
+		CommandResponse result = new CommandResponse();
+		String response = "";
+		try {
+			command += "(" + arguments[0] + ")";
+			ArrayList<View> views = solo.getViews();
+			for (View view : views) {
+//					Log.i(TAG, Integer.toString(view.getId()));
+//					try {
+//						TextView v = (TextView) view;
+//						Log.i(TAG, v.getText().toString());
+//					} catch (Exception e) {
+//						// TODO: handle exception
+//					}
+				if(view.getId() == Integer.parseInt(arguments[0])){
+					TextView v = (TextView) view;
+					response = v.getText().toString();
+				}
+			}
+			//response = v.getText().toString();
+			result.setOriginalCommand(command + ",Response: " + response);
+			result.setResponse(response);
+			result.setSucceeded(true);
+		} catch (Throwable e) {
+			result = handleException(command, e);
+		}
+		return result;
+	}
+	
+	
 
 	private CommandResponse getViews(String[] arguments) {
 		String command = "the command  getViews";
@@ -2380,69 +2423,110 @@ public class SoloExecutor {
 	}
 
 	private CommandResponse countItemsInList(String[] params) {
+		
+		String[] array = new String[1];
 		CommandResponse result = new CommandResponse();
 		String command = "the command \"getListView\": ";
-		final View view = solo.getView(Integer.parseInt(params[0]));
-		if (view instanceof ListView) {
-			ListView listView = (ListView) view;
-			int count = listView.getChildCount();
-			String[] array = new String[1];
-			array[0] = String.valueOf(count);
-			result.setReturnedValues(array);
-			result.setResponse(command);
-			result.setSucceeded(true);
-		} else {
-			result.setSucceeded(false);
-			result.setResponse("View is instance of " + view.getClass().getSimpleName() + " instead of ListView");
-		}
-		return result;
-	}
-	public CommandResponse getIndexListItemByText(String[] params){
-		CommandResponse result = new CommandResponse();
-		String command = "the command \"clickOnListItemByText\": ";
-		String searchedItemText= params[0]; 
-		int textid= Integer.valueOf(params[1]);
-		for (View view : solo.getCurrentViews()) {
-			Log.d(TAG, "creating batch of  lists views ");
+		try{
+			final View view = solo.getView(Integer.parseInt(params[0]));
 			if (view instanceof ListView) {
 				ListView listView = (ListView) view;
 				int count = listView.getChildCount();
-				Log.d(TAG, "get childe of lists of views count = " +count);
-				for( int i =0 ; i<count ;i++)
-					{	// assuming that we have only oe list view on the current main activity 
-					Log.d(TAG, "childe index : "+i);
-//					View view2 = ;
-					ViewGroup latout= ((ViewGroup) listView.getChildAt(i));
-					TextView tv=(TextView) latout.findViewById(textid);
-					String   context=tv.getText().toString();
-					
-//						String   context= ((TextView) listView.getChildAt(i)).getText().toString();
+				array[0] = String.valueOf(count);
+				result.setReturnedValues(array);
+				result.setResponse(command);
+				result.setSucceeded(true);
+				return result;
+			} else {
+				result.setResponse("View is instance of " + view.getClass().getSimpleName() + " instead of ListView");
+			}
+		} catch (Throwable e) {
+			return handleException("Failed: " + result.getOriginalCommand(), e);
+		}
+		array[0] = String.valueOf(-1);
+		result.setSucceeded(true);
+		return result;
+	}
+	
+	public CommandResponse getIndexListItemByText(String[] params){
+		String[] array = new String[1];
+		CommandResponse result = new CommandResponse();
+		String command = "the command \"clickOnListItemByText\": ";
+		String searchedItemText= params[0]; 
+		try{
+			int textid= Integer.valueOf(params[1]);
+			for (View view : solo.getCurrentViews()) {
+				Log.d(TAG, "creating batch of  lists views ");
+				if (view instanceof ListView) {
+					ListView listView = (ListView) view;
+					int count = listView.getChildCount();
+					Log.d(TAG, "get childe of lists of views count = " +count);
+					for( int i =0 ; i<count ;i++)
+						{	// assuming that we have only oe list view on the current main activity 
+						Log.d(TAG, "childe index : "+i);
+	//					View view2 = ;
+						ViewGroup latout= ((ViewGroup) listView.getChildAt(i));
+						TextView tv=(TextView) latout.findViewById(textid);
+						String   context=tv.getText().toString();
 						
-						Log.d(TAG, "context text : " + context.toString());
-						if ( context.contains(searchedItemText)){
-							Log.d(TAG, "context text contains : " + searchedItemText);
-							String[] array = new String[1];
-//							this.solo.clickInList(i);// click on the item in the list 
-							array[0] = String.valueOf(i);
-							result.setReturnedValues(array);
-							result.setResponse(command);
-							result.setSucceeded(true); 
-							return result;
+	//						String   context= ((TextView) listView.getChildAt(i)).getText().toString();
+							
+							Log.d(TAG, "context text : " + context.toString());
+							if ( context.contains(searchedItemText)){
+								Log.d(TAG, "context text contains : " + searchedItemText);
+	//							this.solo.clickInList(i);// click on the item in the list 
+								array[0] = String.valueOf(i);
+								result.setReturnedValues(array);
+								result.setResponse(command);
+								result.setSucceeded(true); 
+								return result;
+							}
 						}
 					}
-				}
+			}
+		} catch (Throwable e) {
+			return handleException("Failed: " + result.getOriginalCommand(), e);
 		}
-		result.setSucceeded(false);
+		array[0] = String.valueOf(-1);
+		result.setReturnedValues(array);
+		result.setSucceeded(true);
 		result.setResponse("can't find searched text in view the searched text is :  " + searchedItemText + " in method clickOnListItemByText");
 		return result;
 	}
 	
-//	public CommandResponse getDrwable(String[] params ){
-//		CommandResponse result = new CommandResponse();
-//		String command = "the command \"getListView\": ";
-//		ImageView imageView = (ImageView) this.solo.getView(Integer.parseInt(params[0]));
-//		 Drawable name = imageView.getDrawable();
-//		 name.getCurrent().();
-//		 
-//	}
+	public CommandResponse validateIfTextIsFound(String[] params){
+		String[] array = new String[1];
+		CommandResponse result = new CommandResponse();
+		String command = "the command validateIfTextIsFound";
+		String searchedItemText = params[0]; 
+//		int textid = Integer.valueOf(params[1]);
+//		int parentId = Integer.valueOf(params[2]);
+		
+		//View parent = solo.getView(parentId);
+		try {
+			for (View view : solo.getCurrentViews()) {
+				
+				if (view instanceof TextView) {
+					TextView tv = (TextView) view;
+					String context = tv.getText().toString();
+					Log.d(TAG, context);
+					if (context.contains(searchedItemText)){
+						Log.d(TAG, "context text contains: " + searchedItemText);
+						result.setResponse(command);
+						array[0] = "true";
+						result.setReturnedValues(array);
+						result.setSucceeded(true); 
+						return result;
+					}
+				}
+			}
+		} catch (Throwable e) {
+			return handleException("Failed: " + result.getOriginalCommand(), e);
+		}
+		array[0] = "false";
+		result.setReturnedValues(array);
+		result.setSucceeded(true);
+		result.setResponse("can't find searched text in view the searched text is :  " + searchedItemText + " in method validateIfTextIsFound");
+		return result;
+	}
 }
