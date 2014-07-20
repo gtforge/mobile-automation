@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
@@ -39,6 +40,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -805,6 +807,10 @@ public class SoloExecutor {
 			response = this.solo.getCurrentViews(TextView.class).get(Integer.parseInt(arguments[0])).getText().toString();
 			result.setResponse(command + ",Response: " + response);
 			result.setSucceeded(true);
+			// added by livnat havn't implementes yet 
+			String resArr[]= new String[1] ;
+			resArr[0]=response;
+			result.setReturnedValues(resArr);
 		} catch (Throwable e) {
 			result = handleException(command, e);
 		}
@@ -2035,20 +2041,26 @@ public class SoloExecutor {
 		try {
 			int radioButtonIndex = Integer.parseInt(params[0]);
 			Log.i(TAG, "Robotium: About to pull radio btn  checked status in index: " + radioButtonIndex);
-			int counter = 0;
-			for (View v : solo.getCurrentViews()) {
-				if (v instanceof RadioButton) {
-					counter++;
-				}
+//			int counter = 0;
+//			for (View v : solo.getCurrentViews()) {
+//				if (v instanceof RadioButton) {
+//					counter++;
+//				}
+//			}
+//			if (radioButtonIndex <= counter) {
+			boolean b= solo.isRadioButtonChecked(radioButtonIndex);
+			if (b==true){
+				retParams[0]="true";
+			} else
+			{
+				retParams[0]="false";
 			}
-			if (radioButtonIndex <= counter) {
-				retParams[0]= String.valueOf(solo.isRadioButtonChecked(radioButtonIndex));
-				response.setParams(retParams);
-			} else {
-				throw new Exception("Radion button index is invalid, found " + counter + " radio buttons and requested index was: " + radioButtonIndex);
-			}
+			response.setReturnedValues(retParams);
+//			} else {
+//				throw new Exception("Radion button index is invalid, found " + counter + " radio buttons and requested index was: " + radioButtonIndex);
+//			}
 			response.setSucceeded(true);
-			response.setResponse("Clicked on radio button with index " + radioButtonIndex);
+			response.setResponse("get status from radio button with index " + radioButtonIndex + "return value : " +b);
 		} catch (Exception e) {
 			return handleException("Failed to run command " + response.getOriginalCommand(), e);
 		}
@@ -2068,12 +2080,17 @@ public class SoloExecutor {
 		try {
 			String checkButtonText = params[0];
 			Log.i(TAG, "Robotium: About to pull radioBtn has  checked status in text: " + checkButtonText);
-			
-			retParams[0]= String.valueOf(solo.isRadioButtonChecked(checkButtonText));
-			response.setParams(retParams);
+			boolean b= solo.isRadioButtonChecked(checkButtonText);
+			if (b==true){
+				retParams[0]="true";
+			} else
+			{
+				retParams[0]="false";
+			}
+			response.setReturnedValues(retParams);
 			
 			response.setSucceeded(true);
-			response.setResponse("validate if radioBtn status is checked for radioBtn  with text " + checkButtonText);
+			response.setResponse("validate if radioBtn status is checked for radioBtn  with text " + checkButtonText + "return value : " +b );
 		} catch (Exception e) {
 			return handleException("Failed to run command " + response.getOriginalCommand(), e);
 		}
@@ -2093,18 +2110,24 @@ public class SoloExecutor {
 		try {
 			int checkButtonIndex = Integer.parseInt(params[0]);
 			Log.i(TAG, "Robotium: About to pull checkBox has  checked status in index: " + checkButtonIndex);
-			int counter = 0;
-			for (View v : solo.getCurrentViews()) {
-				if (v instanceof CheckBox) {
-					counter++;
+//			int counter = 0;
+//			for (View v : solo.getCurrentViews()) {
+//				if (v instanceof CheckBox) {
+//					counter++;
+//				}
+//			}
+//			if (checkButtonIndex <= counter) {
+				boolean b = solo.isCheckBoxChecked(checkButtonIndex);
+				if (b==true){
+					retParams[0]="true";
+				} else
+				{
+					retParams[0]="false";
 				}
-			}
-			if (checkButtonIndex <= counter) {
-				retParams[0]= String.valueOf(solo.isCheckBoxChecked(checkButtonIndex));
-				response.setParams(retParams);
-			} else {
-				throw new Exception("CheckBox button index is invalid, found " + counter + " Check Box  status requested index was: " + checkButtonIndex);
-			}
+				response.setReturnedValues(retParams);
+//			} else {
+//				throw new Exception("CheckBox button index is invalid, found " + counter + " Check Box  status requested index was: " + checkButtonIndex);
+//			}
 			response.setSucceeded(true);
 			response.setResponse("validate if checkobox status is checked for checkoBox  with index " + checkButtonIndex);
 		} catch (Exception e) {
@@ -2126,8 +2149,15 @@ public class SoloExecutor {
 			String checkButtonText = params[0];
 			Log.i(TAG, "Robotium: About to pull checkBox has  checked status in text: " + checkButtonText);
 			
-			retParams[0]= String.valueOf(solo.isCheckBoxChecked(checkButtonText));
-			response.setParams(retParams);
+			boolean b = solo.isCheckBoxChecked(checkButtonText);
+			if (b==true){
+				retParams[0]="true";
+			} else
+			{
+				retParams[0]="false";
+			}
+			//response.setParams(retParams);
+			response.setReturnedValues(retParams);
 			
 			response.setSucceeded(true);
 			response.setResponse("validate if checkobox status is checked for checkoBox  with text " + checkButtonText);
