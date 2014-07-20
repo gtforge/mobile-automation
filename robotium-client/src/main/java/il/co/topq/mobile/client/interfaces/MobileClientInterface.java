@@ -276,4 +276,5 @@ public interface MobileClientInterface {
 	public void closeConnection() throws Exception;
 	public CommandResponse getTextById(int id) throws Exception;
 	public CommandResponse validateIfTextIsFound(String textToSearch) throws Exception;
+	public CommandResponse getListItemContentByText(String searchText, int columnToSearchIn, int targetColumnToPull) throws Exception;
 }

@@ -348,7 +348,10 @@ public class SoloExecutor {
 			response = getIndexListItemByText(request.getParams());
 		} else if (commandStr.equals("validateIfTextIsFound")) {
 			response = validateIfTextIsFound(request.getParams());
+		} else if (commandStr.equals("getListItemContentByText")) {
+			response = getListItemContentByText(request.getParams());
 		}
+		
 		
 		else{
 			Log.e(TAG, "ERROR - Didn't find the method: " + request.getCommand() + request.getParams() + " in this class - SoloExecutor!");
@@ -2461,6 +2464,53 @@ public class SoloExecutor {
 		result.setReturnedValues(array);
 		result.setSucceeded(true);
 		result.setResponse("can't find searched text in view the searched text is :  " + searchedItemText + " in method clickOnListItemByText");
+		return result;
+	}
+	public CommandResponse getListItemContentByText(String[] params){
+		String[] array = new String[1];
+		CommandResponse result = new CommandResponse();
+		String command = "the command \"GetTextInListItemByText\": ";
+		String searchText = params[0]; //order id in dbx history
+		Log.d(TAG, "Search Text: " + searchText);
+		try{
+			int columnToSearchIn = Integer.valueOf(params[1]);
+			Log.d(TAG, "Column To Search In: " + columnToSearchIn);
+			int targetColumnToPull = Integer.valueOf(params[2]);
+			Log.d(TAG, "Column To Pull from: " + targetColumnToPull);
+
+			for (View view : solo.getCurrentViews()) {
+				Log.d(TAG, "creating batch of  lists views ");
+				if (view instanceof ListView) {
+					ListView listView = (ListView) view;
+					int count = listView.getChildCount();
+					Log.d(TAG, "get childe of lists of views count = " +count);
+					for( int i =0 ; i<count ;i++)
+					{	
+						Log.d(TAG, "childe index : "+i);
+						
+						View row= listView.getChildAt(i);
+						
+						TextView txtDateView=(TextView) row.findViewById(columnToSearchIn);
+						if(txtDateView.getText().toString().contains(searchText)){ //Date column in dbx history
+							TextView cost =(TextView) row.findViewById(targetColumnToPull);
+							array[0] = cost.getText().toString();
+							result.setReturnedValues(array);
+							result.setResponse(command);
+							result.setSucceeded(true); 
+							Log.d(TAG, "context text : " + "Success pulling" + cost.getText().toString());
+							return result;
+						}
+						//Log.d(TAG, "context text : " + "");
+					}
+				}
+			}
+		} catch (Throwable e) {
+			return handleException("Failed: " + result.getOriginalCommand(), e);
+		}
+		array[0] = "";
+		result.setReturnedValues(array);
+		result.setSucceeded(true);
+		result.setResponse("can't find searched text in view the searched text is :  " + searchText + " in method clickOnListItemByText");
 		return result;
 	}
 	
