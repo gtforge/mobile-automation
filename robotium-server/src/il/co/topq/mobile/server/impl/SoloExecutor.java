@@ -352,6 +352,8 @@ public class SoloExecutor {
 			response = validateIfTextIsFound(request.getParams());
 		} else if (commandStr.equals("getListItemContentByText")) {
 			response = getListItemContentByText(request.getParams());
+		} else if (commandStr.equals("validateIfTextIsFoundById")) {
+			response = validateIfTextIsFoundById(request.getParams());
 		}
 		
 		
@@ -2577,6 +2579,43 @@ public class SoloExecutor {
 		result.setReturnedValues(array);
 		result.setSucceeded(true);
 		result.setResponse("can't find searched text in view the searched text is :  " + searchedItemText + " in method validateIfTextIsFound");
+		return result;
+	}
+	
+	public CommandResponse validateIfTextIsFoundById(String[] params){
+		String[] array = new String[1];
+		CommandResponse result = new CommandResponse();
+		String command = "the command validateIfTextIsFoundById";
+		int textViewid = Integer.valueOf(params[0]);
+		String searchedItemText = params[1]; 
+//		int parentId = Integer.valueOf(params[2]);
+		
+		//View parent = solo.getView(parentId);
+		try {
+			Log.d(TAG, "the text vie id : " +textViewid+ "in the validateIfTextIsFoundById()");
+			for (View view : solo.getCurrentViews()) {
+			
+				if (view instanceof TextView) {
+					TextView tv = (TextView) view.findViewById(textViewid);
+					String context = tv.getText().toString();
+					Log.d(TAG, context);
+					if (context.contains(searchedItemText)){
+						Log.d(TAG, "context text contains: " + searchedItemText);
+						result.setResponse(command);
+						array[0] = "true";
+						result.setReturnedValues(array);
+						result.setSucceeded(true); 
+						return result;
+					}
+				}
+			}
+		} catch (Throwable e) {
+			return handleException("Failed: " + result.getOriginalCommand(), e);
+		}
+		array[0] = "false";
+		result.setReturnedValues(array);
+		result.setSucceeded(true);
+		result.setResponse("can't find searched text in view the searched text is :  " + searchedItemText + " in method validateIfTextIsFoundById");
 		return result;
 	}
 }

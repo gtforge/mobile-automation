@@ -786,5 +786,10 @@ public class MobileClient implements MobileClientInterface {
 			throws Exception {
 		return sendData("validateIfTextIsFound", textToSearch);
 	}
-		
+	@Override
+	public CommandResponse validateIfTextIsFound(int viewid ,String textToSearch)
+			throws Exception {
+		return sendData("validateIfTextIsFound", String.valueOf(viewid ), textToSearch);
+	}
+	
 }
